@@ -1,6 +1,6 @@
 const chalk = require("chalk")
 const yargs = require("yargs")
-// const str = require('./ulti.js')
+ const nodes = require('./ulti.js')
 
 const val = require("validator")
 const { title } = require("process")
@@ -33,8 +33,7 @@ yargs.command({
         }
     },
     handler: function(argv){
-        console.log("body : " + argv.body)
-        console.log("title : " + argv.title)
+       nodes.addnotes(argv.title , argv.body)
     }
 })
 
