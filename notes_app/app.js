@@ -3,8 +3,8 @@ const yargs = require("yargs")
  const nodes = require('./ulti.js')
 
 const val = require("validator")
-const { title } = require("process")
-const { demandOption } = require("yargs")
+const { title, argv } = require("process")
+const { demandOption, describe } = require("yargs")
 const { type } = require("os")
 
 
@@ -32,24 +32,37 @@ yargs.command({
             type:'string',
         }
     },
-    handler: function(argv){
-       nodes.addnotes(argv.title , argv.body)
-    }
+    handler: (argv) => nodes.addnotes(argv.title , argv.body)
+    
+       
 })
 
 yargs.command({
     command: "remove",
     describe: "remove new note",
-    handler: function(){
+     builder: {
+         title: {
+            describe : "title",
+            demandOption : true,
+            type : 'string'
+         }
+     },
+
+    handler:(argv) => {
         console.log("removing")
+       nodes.removenotes(argv.title , argv.body)
     }
+    
 })
+
+
 
 yargs.command({
     command: "list",
-    describe: "list the notes",
-    handler: function(){
-        console.log("listing")
+    describe: "list the notes",  
+    
+    handler: () => {
+        nodes.listnotes()
     }
 })
 
