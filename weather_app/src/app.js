@@ -1,10 +1,13 @@
 const express = require('express')
 const path = require("path")
 const hbs = require('hbs')
+const weather = require("./sources/util_callbacks.js")
 
 //const wether = require("C:/Users/israi/Desktop/node js/playground/4_callbacks.js")
 
 const app = express()
+
+const port = process.env.PORT || 3000 // heroku will use environment variables and give the value
 
 const value = path.join(__dirname , '../template/views') // define for temolate folder 
 const par = path.join(__dirname , '../template/partials')
@@ -49,6 +52,42 @@ app.get('' , (req, res) => {
 //     res.send('<title>about my page</title>')
 // })
 
+app.get('/weather' , (req,res) => {
+
+    if(!req.query.address)  {
+        return res.send({
+            error : 'please add a address'
+        })
+    }
+
+    weather.geocode(req.query.address, (error,{latitude , longitude , location} = {} )=> {
+            weather.forecast(latitude , longitude , (error,data) =>{
+                if(error){
+                    return res.send({
+                        error : 'error in getting values'
+                    })
+                }
+                res.send({
+                    temperature : data,
+                    address : req.query.address,
+                    longi : longitude,
+                    lati : latitude
+
+                   
+                })
+            })
+    })
+    // res.send({
+    //     address : req.query.address
+    // })
+
+
+    // res.send({
+    //     address : 'delhi',
+    //     place : 'India'
+    // })
+})
+
 app.get('/about' , (req, res) => {
     res.render('about' ,{
         title : 'lol',
@@ -62,6 +101,22 @@ app.get('/help' , (req, res)=> {
         message : 'popular stuff',
         name : 'ineesh raina'
     })
+})
+
+app.get('/products' ,(req,res) => {
+
+    if(!req.query.search){
+       return res.send({
+            error:'please send something in search'
+        })
+
+    }
+
+    console.log(req.query.search)
+    res.send({
+        products: []
+    })
+
 })
 
 // app.get('/weather' , (req, res) => {
@@ -84,7 +139,7 @@ app.get('*' , (req,res) => {
         title : 'not found'
     })
 })
-app.listen(3000 , () => {
-    console.log("server running")
+app.listen(port , () => {
+    console.log("server running" + port)
 })
 
